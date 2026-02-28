@@ -9,7 +9,9 @@ import org.bukkit.Tag;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlotGroup;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.ToolComponent;
 import org.bukkit.persistence.PersistentDataType;
@@ -54,17 +56,44 @@ public class ItemsBuilder {
         return this;
     }
 
-    public ItemsBuilder createPickaxe(MiningTier tier, float defaultSpeed) {
+    public ItemsBuilder setMaxDurability(int durability) {
+        if (meta instanceof Damageable damageable) {
+            damageable.setMaxDamage(durability);
+        }
+        return this;
+    }
+
+    public ItemsBuilder hideAttributes() {
+        NamespacedKey key = new NamespacedKey(plugin, "hide_stats");
+        AttributeModifier modifier = new AttributeModifier(
+                key,
+                0.0,
+                AttributeModifier.Operation.ADD_NUMBER,
+                EquipmentSlotGroup.ANY
+        );
+
+        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+        meta.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED, modifier);
+
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+
+        return this;
+    }
+
+    public ItemsBuilder createTool(Tag<Material> blockTag, MiningTier tier, float speed) {
         ToolComponent tool = meta.getTool();
 
-        tool.addRule(Tag.MINEABLE_PICKAXE, defaultSpeed, true);
+        tool.setDefaultMiningSpeed(1.0f);
+        tool.addRule(blockTag, speed, true);
 
         for (MiningTier higherTier : tier.getHigherTiers()) {
-            tool.addRule(higherTier.getTag(), defaultSpeed, false);
+            tool.addRule(higherTier.getTag(), speed, false);
         }
 
         tool.setDamagePerBlock(1);
         meta.setTool(tool);
+
         return this;
     }
 

@@ -53,6 +53,13 @@ public class ItemsCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NonNull @NotNull String[] args) {
+        if (args.length == 1) {
+            return List.of("give");
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
+            return manager.getRegisteredIds().stream().sorted().toList();
+        }
+
         return List.of();
     }
 }
