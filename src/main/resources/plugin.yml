@@ -1,0 +1,10 @@
+name: OnyxItems
+version: '1.0.0'
+main: com.timedust.onyxItems.OnyxItems
+api-version: '1.21'
+
+commands:
+  getitem:
+    description: "Okay"
+  onyxitems:
+    description: "Okay"
