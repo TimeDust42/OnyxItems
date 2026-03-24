@@ -2,9 +2,12 @@ package com.timedust.onyxItems.items;
 
 import com.timedust.onyxItems.items.utils.lore.LoreBuilder;
 import com.timedust.onyxItems.items.utils.rarity.Rarity;
+import com.timedust.onyxItems.utils.ItemStat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public abstract class AbstractItem {
 
@@ -39,20 +42,20 @@ public abstract class AbstractItem {
     }
 
     public ItemStack getItem() {
-        LoreBuilder lb = new LoreBuilder()
-                .rarity(rarity);
-
-        addLore(lb);
-
         ItemBuilder builder = new ItemBuilder(material)
                 .id(id)
                 .name(displayName)
-                .rarity(this.rarity)
-                .lore(lb);
+                .rarity(this.rarity);
 
         applyExtra(builder);
 
-        return builder.build();
+        LoreBuilder lb = new LoreBuilder()
+                .rarity(rarity)
+                .enchantments(builder.getEnchants());
+
+        addLore(lb);
+
+        return builder.lore(lb).build();
     }
 
     // --- Геттеры ---

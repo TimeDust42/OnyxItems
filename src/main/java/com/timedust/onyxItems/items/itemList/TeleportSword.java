@@ -3,6 +3,7 @@ package com.timedust.onyxItems.items.itemList;
 import com.timedust.onyxItems.items.AbstractItem;
 import com.timedust.onyxItems.items.Interactable;
 import com.timedust.onyxItems.items.ItemBuilder;
+import com.timedust.onyxItems.utils.MouseButtons;
 import com.timedust.onyxItems.utils.TeleportUtils;
 import com.timedust.onyxItems.items.utils.lore.LoreBuilder;
 import com.timedust.onyxItems.items.utils.rarity.Rarity;
@@ -28,9 +29,13 @@ public class TeleportSword extends AbstractItem implements Interactable {
 
     @Override
     protected void addLore(LoreBuilder lb) {
-        lb.description(Component.text("Teleportation sword")
-                        .color(NamedTextColor.YELLOW))
-                .ability("Teleportation", Component.text("Teleports the player " + (int) TELEPORT_DISTANCE + " blocks forward"));
+        lb
+                .description(
+                        Component.text("Teleportation sword").color(NamedTextColor.YELLOW))
+                .ability(
+                        Component.text("Teleportation"),
+                        MouseButtons.RIGHT,
+                        Component.text("Teleports the player " + (int) TELEPORT_DISTANCE + " blocks forward"));
     }
 
     @Override

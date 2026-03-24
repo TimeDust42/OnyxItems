@@ -41,7 +41,9 @@ public class BlockBreakListener implements Listener {
 
         if (customItem instanceof Mineable mineable) {
             RayTraceResult ray = player.rayTraceBlocks(5);
-            BlockFace face = (ray != null) ? ray.getHitBlockFace() : BlockFace.UP;
+            BlockFace face = getBlockFace(player);
+
+            player.sendMessage("Вы ударили по грани: " + face.name());
 
             try {
                 isMining.add(uuid);
@@ -52,4 +54,19 @@ public class BlockBreakListener implements Listener {
         }
     }
 
+    private BlockFace getBlockFace(Player player) {
+        float pitch = player.getLocation().getPitch();
+        float yaw = player.getLocation().getYaw();
+
+        // Если игрок смотрит сильно вверх или вниз — это всегда горизонтальный разлом (UP/DOWN)
+        if (pitch < -45) return BlockFace.DOWN;
+        if (pitch > 45) return BlockFace.UP;
+
+        // Иначе определяем по горизонтальному углу (стороны света)
+        yaw = (yaw % 360 + 360) % 360; // нормализуем угол от 0 до 360
+        if (yaw >= 315 || yaw < 45) return BlockFace.SOUTH;
+        if (yaw >= 45 && yaw < 135) return BlockFace.WEST;
+        if (yaw >= 135 && yaw < 225) return BlockFace.NORTH;
+        return BlockFace.EAST;
+    }
 }

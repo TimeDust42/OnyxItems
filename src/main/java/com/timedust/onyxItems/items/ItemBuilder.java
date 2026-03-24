@@ -4,6 +4,8 @@ import com.timedust.onyxItems.Keys;
 import com.timedust.onyxItems.OnyxItems;
 import com.timedust.onyxItems.items.utils.lore.LoreBuilder;
 import com.timedust.onyxItems.items.utils.rarity.Rarity;
+import com.timedust.onyxItems.utils.Enchant;
+import com.timedust.onyxItems.utils.TextUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -13,12 +15,14 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemBuilder {
 
     private final ItemStack item;
     private final ItemMeta meta;
+    private final List<Enchant> enchants = new ArrayList<>();
 
     public ItemBuilder(Material material) {
         this.item = new ItemStack(material);
@@ -35,7 +39,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder name(Component text) {
-        meta.displayName(removeItalic(text));
+        meta.displayName(TextUtils.removeItalic(text));
         return this;
     }
 
@@ -48,7 +52,7 @@ public class ItemBuilder {
 
     public ItemBuilder lore(List<Component> lines) {
         List<Component> clean = lines.stream()
-                .map(ItemBuilder::removeItalic)
+                .map(TextUtils::removeItalic)
                 .toList();
         meta.lore(clean);
         return this;
@@ -83,6 +87,19 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder enchant(Enchant enchant) {
+        if (enchant == null) return this;
+        meta.addEnchant(enchant.enchantment(), enchant.level(), true);
+        this.enchants.add(enchant);
+        return this;
+    }
+
+    public ItemBuilder enchantAll(List<Enchant> enchants) {
+        if (enchants == null) return this;
+        enchants.forEach(this::enchant);
+        return this;
+    }
+
     public ItemBuilder hideAll() {
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
         return this;
@@ -101,7 +118,7 @@ public class ItemBuilder {
         return item;
     }
 
-    private static Component removeItalic(Component component) {
-        return component.decoration(TextDecoration.ITALIC, false);
+    public List<Enchant> getEnchants() {
+        return enchants;
     }
 }
