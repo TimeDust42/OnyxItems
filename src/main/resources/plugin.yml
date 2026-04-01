@@ -4,7 +4,5 @@ main: com.timedust.onyxItems.OnyxItems
 api-version: '1.21'
 
 commands:
-  getitem:
-    description: "Okay"
   onyxitems:
     description: "Okay"

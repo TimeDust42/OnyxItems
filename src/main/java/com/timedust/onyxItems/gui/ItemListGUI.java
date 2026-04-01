@@ -2,7 +2,7 @@ package com.timedust.onyxItems.gui;
 
 import com.timedust.onyxItems.Keys;
 import com.timedust.onyxItems.items.AbstractItem;
-import com.timedust.onyxItems.items.ItemFactory;
+import com.timedust.onyxItems.items.ItemRegistry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,6 +19,12 @@ import java.util.Objects;
 
 public class ItemListGUI {
 
+    private final ItemRegistry itemRegistry;
+
+    public ItemListGUI(ItemRegistry itemRegistry) {
+        this.itemRegistry = itemRegistry;
+    }
+
     public void openGUI(Player player) {
         Inventory inventory = Bukkit.createInventory(new MenuHolder(event -> {
             event.setCancelled(true);
@@ -29,7 +35,7 @@ public class ItemListGUI {
                         .getPersistentDataContainer()
                         .get(Keys.ITEM_ID_KEY, PersistentDataType.STRING);
                 if (id != null) {
-                    AbstractItem original = ItemFactory.getByID(id);
+                    AbstractItem original = itemRegistry.getItem(id);
                     if (original != null) {
                         Component itemComponent = original.displayName().hoverEvent(item.asHoverEvent()).color(original.rarity().getColor());
 
@@ -44,7 +50,7 @@ public class ItemListGUI {
         }),
                 54,
                 Component.text("Item List",  NamedTextColor.YELLOW));
-        List<ItemStack> items = ItemFactory.getItems().stream().map(AbstractItem::getItem).toList();
+        List<ItemStack> items = itemRegistry.getAllItems().stream().map(AbstractItem::getItem).toList();
 
         int slot = 0;
         for (ItemStack original : items) {

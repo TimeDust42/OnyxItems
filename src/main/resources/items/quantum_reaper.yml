@@ -1,0 +1,63 @@
+# ID предмета (ключ в мапе ItemRegistry)
+quantum_reaper:
+  # --- БАЗОВЫЕ ПАРАМЕТРЫ (AbstractItem / ItemBuilder) ---
+  material: NETHERITE_HOE
+  display-name: "<gradient:#55ffff:#ff55ff>Квантовый Жнец</gradient>"
+  rarity: LEGENDARY # Считывается в Rarity.getById()
+  custom-model-data: 10501
+  unbreakable: true
+  max-stack: 1
+  
+  # --- ВИЗУАЛЬНЫЕ ФЛАГИ (ItemBuilder) ---
+  flags:
+    - HIDE_ENCHANTS
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
+
+  # --- ХАРАКТЕРИСТИКИ (LoreBuilder / AttributeModifiers) ---
+  attributes:
+    - "attack_damage 12 ADD_NUMBER any"
+    - "attack_speed 1.6 ADD_NUMBER any"
+    - "movement_speed 0.2 ADD_SCALAR hand"
+
+  # --- ЗАЧАРОВАНИЯ (Пойдут в ItemBuilder.enchantments) ---
+  enchants:
+    sharpness: 5
+    looting: 3
+    fire_aspect: 2
+
+  # --- ЛОР (LoreBuilder с блоками) ---
+  # Блок описания (addDescription)
+  description:
+    - "<gray>Орудие, забытое в междумирье."
+    - "<dark_gray><i>'Там, где реальность трещит по швам...'</i>"
+  
+  # --- СПОСОБНОСТИ (AbilityManager) ---
+  # Основная способность (ПКМ)
+  ability:
+    id: "BLINK" # Ключ для AbilityRegistry
+    display-name: "Квантовый Скачок"
+    button: RIGHT
+    cooldown: 1
+    settings: # Эти параметры полетят в Ability.execute()
+      distance: 8.0
+      particle: "REVERSE_PORTAL"
+      sound: "ENTITY_ENDERMAN_TELEPORT"
+      damage-on-landing: 4.0
+  
+  # Пассивная способность (например, при ударе)
+  # passive:
+  #   id: "LIFE_STEAL"
+  #   settings:
+  #     chance: 0.15 # 15% шанс хила
+  #     multiplier: 0.2 # 20% от нанесенного урона
+
+  # --- УСЛОВИЯ (Conditions) ---
+  # Кому можно использовать
+  # requirements:
+  #   level: 50
+  #   permission: "onyx.items.reaper"
+  #   world: "world_nether" # Работает только в аду
+
+  # --- СИСТЕМА ОБНОВЛЕНИЯ ---
+  version: 3

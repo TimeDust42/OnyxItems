@@ -1,4 +1,4 @@
-package com.timedust.onyxItems.utils;
+package com.timedust.onyxItems.utils.enums;
 
 import net.kyori.adventure.text.Component;
 

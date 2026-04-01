@@ -1,22 +1,24 @@
 package com.timedust.onyxItems;
 
-import com.timedust.onyxItems.commands.ItemsCommand;
+import com.timedust.onyxItems.ability.AbilityRegistry;
 import com.timedust.onyxItems.commands.OnyxItemsCommand;
 import com.timedust.onyxItems.gui.ItemListGUI;
-import com.timedust.onyxItems.items.ItemFactory;
-import com.timedust.onyxItems.items.Items;
-import com.timedust.onyxItems.listeners.BlockBreakListener;
+import com.timedust.onyxItems.items.ItemRegistry;
+import com.timedust.onyxItems.listeners.AbilityListener;
 import com.timedust.onyxItems.listeners.EntityDamageListener;
 import com.timedust.onyxItems.listeners.InventoryListener;
-import com.timedust.onyxItems.listeners.ItemInteractListener;
+import com.timedust.onyxItems.listeners.PlayerInteractListener;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public final class OnyxItems extends JavaPlugin {
 
     private static OnyxItems plugin;
+    private ItemRegistry itemRegistry;
     private ItemListGUI itemListGUI;
 
     @Override
@@ -24,24 +26,29 @@ public final class OnyxItems extends JavaPlugin {
         // Initialize
         plugin = this;
 
-        Items.registerItems();
+        File itemsFolder = new File(getDataFolder(), "items");
+        if (!itemsFolder.exists()) {
+            itemsFolder.mkdirs();
+        }
+        itemRegistry = new ItemRegistry(getDataFolder());
+        itemRegistry.load();
 
-        itemListGUI = new ItemListGUI();
+        itemListGUI = new ItemListGUI(itemRegistry);
+
+        AbilityRegistry.registerAll();
 
         // Events
-        getServer().getPluginManager().registerEvents(new ItemInteractListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockBreakListener(), this);
         getServer().getPluginManager().registerEvents(new EntityDamageListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        getServer().getPluginManager().registerEvents(new AbilityListener(itemRegistry), this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
 
         // Commands
-        registerCommand("onyxitems", new OnyxItemsCommand(itemListGUI));
-        registerCommand("getitem",  new ItemsCommand());
+        registerCommand("onyxitems", new OnyxItemsCommand(itemRegistry, itemListGUI));
     }
 
     @Override
     public void onDisable() {
-        ItemFactory.clearItems();
     }
 
     public static OnyxItems getInstance() {

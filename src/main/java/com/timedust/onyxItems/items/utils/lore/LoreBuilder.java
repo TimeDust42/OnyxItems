@@ -1,18 +1,17 @@
 package com.timedust.onyxItems.items.utils.lore;
 
 import com.timedust.onyxItems.items.utils.rarity.Rarity;
-import com.timedust.onyxItems.utils.Enchant;
-import com.timedust.onyxItems.utils.ItemStat;
-import com.timedust.onyxItems.utils.MouseButtons;
+import com.timedust.onyxItems.utils.ItemEnchant;
+import com.timedust.onyxItems.utils.ItemAbility;
+import com.timedust.onyxItems.utils.ItemAttribute;
+import com.timedust.onyxItems.utils.enums.MouseButtons;
 import com.timedust.onyxItems.utils.TextUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.enchantments.Enchantment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class LoreBuilder {
 
@@ -26,19 +25,19 @@ public class LoreBuilder {
     public LoreBuilder() {}
 
     // --- Характеристики ---
-    public LoreBuilder stats(List<ItemStat> statList) {
+    public LoreBuilder attributes(List<ItemAttribute> statList) {
         if (statList == null) return this;
         statList.forEach(s -> {
             Component stat = s.name().color(NamedTextColor.GRAY)
                     .append(Component.text(": ").color(NamedTextColor.GRAY))
-                    .append(Component.text(s.getFormattedValue()).color(NamedTextColor.YELLOW));
+                    .append(Component.text(s.getFormattedValue()).color(s.valueColor()));
             stats.add(stat);
         });
         return this;
     }
 
     // --- Зачарования ---
-    public LoreBuilder enchantments(List<Enchant> enchantments) {
+    public LoreBuilder enchantments(List<ItemEnchant> enchantments) {
         if (enchantments == null ||enchantments.isEmpty()) return this;
 
         enchantments.forEach((enchant) -> {
@@ -61,31 +60,36 @@ public class LoreBuilder {
     }
 
     // --- Способности ---
-    public LoreBuilder ability(Component name, MouseButtons button, List<? extends Component> lines) {
+    public LoreBuilder ability(ItemAbility ability) {
         Component header = TextUtils.removeItalic(Component.text("Ability: ").color(NamedTextColor.GOLD).decoration(TextDecoration.BOLD, true));
 
-        if (name == null) return this;
-        header = header.append(TextUtils.removeItalic(name).color(NamedTextColor.WHITE));
+        if (ability.name() == null) return this;
+        header = header.append(ability.name());
 
-        if (button != MouseButtons.NONE) {
+        if (ability.button() != MouseButtons.NONE) {
             header = header.append(TextUtils.removeItalic(Component.text(" ")));
-            header = header.append(TextUtils.removeItalic(button.getName().color(NamedTextColor.YELLOW)));
+            header = header.append(TextUtils.removeItalic(ability.button().getName().color(NamedTextColor.YELLOW)));
         }
         abilities.add(header);
-        if (lines != null) {
-            lines.forEach(line -> abilities.add(TextUtils.removeItalic(line.color(NamedTextColor.GRAY))));
-        }
-        return this;
-    }
 
-    public LoreBuilder ability(Component name, MouseButtons button, Component line) {
-        return ability(name, button, List.of(line));
+        if (ability.description() != null) {
+            Component description = ability.description();
+            abilities.add(description);
+        }
+
+        if (ability.cooldown() != 0) {
+            Component cooldown = Component.text("Cooldown: ").color(NamedTextColor.GRAY);
+            cooldown = cooldown.append(Component.text(ability.cooldown()).color(NamedTextColor.GRAY));
+            abilities.add(cooldown);
+        }
+
+        return this;
     }
 
     // --- Редкость ---
     public LoreBuilder rarity(Rarity rarity) {
         if (rarity != null) {
-            this.rarityComponent = TextUtils.removeItalic(rarity.getDisplayName());
+            this.rarityComponent = TextUtils.removeItalic(rarity.displayName());
         }
         return this;
     }

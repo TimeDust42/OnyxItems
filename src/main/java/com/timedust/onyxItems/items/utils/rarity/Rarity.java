@@ -22,7 +22,7 @@ public enum Rarity {
         this.displayName = displayName;
     }
 
-    public String getId() {
+    public String id() {
         return id;
     }
 
@@ -30,13 +30,13 @@ public enum Rarity {
         return color;
     }
 
-    public Component getDisplayName() {
+    public Component displayName() {
         return displayName;
     }
 
     public static Rarity getById(String id) {
         for (Rarity rarity : Rarity.values()) {
-            if (rarity.getId().equals(id)) {
+            if (rarity.id().equals(id)) {
                 return rarity;
             }
         }
